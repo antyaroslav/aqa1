@@ -2,9 +2,9 @@ name: Java CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, testng, junit4 ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, testng, junit4 ]
 
 jobs:
   build:
@@ -17,19 +17,18 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '11'
-          distribution: 'adopt'
+          distribution: 'temurin'
 
-      - name: Setup Gradle Wrapper
-        run: chmod +x ./gradlew
-
-      - name: Build with Gradle
-        run: ./gradlew clean build test --info
-
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
         with:
-          name: test-results
-          path: |
-            build/test-results/**/test/*.xml
-            build/reports/tests/test/
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build and Test
+        run: |
+          chmod +x ./gradlew
+          chmod +x ./gradlew.bat
+          ./gradlew clean build test
