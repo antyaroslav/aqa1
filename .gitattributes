@@ -1,0 +1,3 @@
+echo "gradlew text eol=lf" > .gitattributes
+echo "gradlew.bat text eol=crlf" >> .gitattributes
+echo ".gitignore text eol=crlf" >> .gitattributes
